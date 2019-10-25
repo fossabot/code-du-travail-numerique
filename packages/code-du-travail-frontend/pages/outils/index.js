@@ -9,6 +9,7 @@ import {
 } from "@socialgouv/react-ui";
 import fetch from "isomorphic-unfetch";
 import Link from "next/link";
+import { SOURCES, getRouteBySource } from "@cdt/sources";
 
 import { Layout } from "../../src/layout/Layout";
 import Metas from "../../src/common/Metas";
@@ -16,7 +17,7 @@ import Metas from "../../src/common/Metas";
 const {
   publicRuntimeConfig: { API_URL }
 } = getConfig();
-const Tools = ({ pageUrl, ogImage, emailTemplates }) => (
+const Tools = ({ pageUrl, ogImage, emailTemplates, tools }) => (
   <Layout>
     <Metas
       url={pageUrl}
@@ -28,11 +29,14 @@ const Tools = ({ pageUrl, ogImage, emailTemplates }) => (
       <Container>
         <PageTitle>Retrouvez tous nos outils</PageTitle>
         <CardList title="Nos outils de calcul">
-          {tools.map(({ title, hrefTitle, button, slug, href }) => (
-            <Link href={href} as={slug} passHref key={slug}>
-              <Tile button={button} title={hrefTitle}>
-                {title}
-              </Tile>
+          {tools.map(({ title, slug }) => (
+            <Link
+              href={`/${getRouteBySource(SOURCES.TOOLS)}/[slug]`}
+              as={`/${getRouteBySource(SOURCES.TOOLS)}/${slug}`}
+              passHref
+              key={slug}
+            >
+              <Tile button={"Démarrer"}>{title}</Tile>
             </Link>
           ))}
         </CardList>
@@ -56,15 +60,25 @@ const Tools = ({ pageUrl, ogImage, emailTemplates }) => (
 );
 
 Tools.getInitialProps = async () => {
-  const response = await fetch(`${API_URL}/modeles`);
-  if (!response.ok) {
-    return { statusCode: response.status };
+  const [toolsResponse, modelesResponse] = await Promise.all([
+    fetch(`${API_URL}/tools`),
+    fetch(`${API_URL}/modeles`)
+  ]);
+  if (!toolsResponse.ok) {
+    return { statusCode: toolsResponse.status };
   }
+  if (!modelesResponse.ok) {
+    return { statusCode: modelesResponse.status };
+  }
+
+  const { children: tools } = await toolsResponse.json();
+
   const {
     hits: { hits }
-  } = await response.json();
+  } = await modelesResponse.json();
   const emailTemplates = hits.map(({ _source }) => _source);
-  return { emailTemplates };
+
+  return { tools, emailTemplates };
 };
 
 export default Tools;
