@@ -7,7 +7,7 @@ import { Container, Section, CardList, Tile } from "@socialgouv/react-ui";
 
 import ConventionModal from "../conventions/Search/Modal";
 
-function Tools({ tools }) {
+function Tools({ tools = [] }) {
   return (
     <Section variant="white">
       <Container>

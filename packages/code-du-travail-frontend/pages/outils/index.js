@@ -17,7 +17,7 @@ import Metas from "../../src/common/Metas";
 const {
   publicRuntimeConfig: { API_URL }
 } = getConfig();
-const Tools = ({ pageUrl, ogImage, emailTemplates, tools }) => (
+const Tools = ({ pageUrl, ogImage, emailTemplates, tools = [] }) => (
   <Layout>
     <Metas
       url={pageUrl}
