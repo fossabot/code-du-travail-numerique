@@ -18,10 +18,12 @@ const router = new Router({ prefix: API_BASE_URL });
  */
 router.get("/tools", async ctx => {
   const body = getRootToolsQuery();
+  console.log("Tool is called !");
   const response = await elasticsearchClient.search({
     index,
     body
   });
+  console.log("Response body is :", response.body);
   ctx.body = {
     children: response.body.hits.hits.map(t => t._source)
   };
@@ -43,7 +45,6 @@ router.get("/tools/:slug", async ctx => {
     index,
     body
   });
-  console.log("Response body is :", response.body);
   if (response.body.hits.hits.length === 0) {
     ctx.throw(404, `there is no tool that matches ${slug}`);
   }

@@ -12,12 +12,11 @@ import Link from "next/link";
 
 import { Layout } from "../../src/layout/Layout";
 import Metas from "../../src/common/Metas";
-import { outils } from "../../src/common/Outils";
 
 const {
   publicRuntimeConfig: { API_URL }
 } = getConfig();
-const Outils = ({ pageUrl, ogImage, emailTemplates }) => (
+const Tools = ({ pageUrl, ogImage, emailTemplates }) => (
   <Layout>
     <Metas
       url={pageUrl}
@@ -29,15 +28,13 @@ const Outils = ({ pageUrl, ogImage, emailTemplates }) => (
       <Container>
         <PageTitle>Retrouvez tous nos outils</PageTitle>
         <CardList title="Nos outils de calcul">
-          {outils
-            .filter(({ href }) => href.startsWith("/outils"))
-            .map(({ title, hrefTitle, button, slug, href }) => (
-              <Link href={href} as={slug} passHref key={slug}>
-                <Tile button={button} title={hrefTitle}>
-                  {title}
-                </Tile>
-              </Link>
-            ))}
+          {tools.map(({ title, hrefTitle, button, slug, href }) => (
+            <Link href={href} as={slug} passHref key={slug}>
+              <Tile button={button} title={hrefTitle}>
+                {title}
+              </Tile>
+            </Link>
+          ))}
         </CardList>
         <CardList title="Nos modèles de lettres personnalisables">
           {emailTemplates.map(({ title, slug }) => (
@@ -58,7 +55,7 @@ const Outils = ({ pageUrl, ogImage, emailTemplates }) => (
   </Layout>
 );
 
-Outils.getInitialProps = async () => {
+Tools.getInitialProps = async () => {
   const response = await fetch(`${API_URL}/modeles`);
   if (!response.ok) {
     return { statusCode: response.status };
@@ -70,4 +67,4 @@ Outils.getInitialProps = async () => {
   return { emailTemplates };
 };
 
-export default Outils;
+export default Tools;
